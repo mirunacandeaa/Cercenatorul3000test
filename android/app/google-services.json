@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "850389631154",
+    "project_id": "test-4e0bf",
+    "storage_bucket": "test-4e0bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850389631154:android:24ff544f443087fbb389ab",
+        "android_client_info": {
+          "package_name": "com.example.cercenatorul3000"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFsVQYMnwstcLl1CyT3p7O-fjQe8qnB6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
