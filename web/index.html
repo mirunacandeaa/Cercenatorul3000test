@@ -20,30 +20,11 @@
   <link rel="manifest" href="manifest.json">
 
   <script>
-
-    import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
+    // The value below is injected by flutter build, do not touch.
     const serviceWorkerVersion = null;
-
-    // Initialize Firebase
-    var firebaseConfig = {
-      apiKey: "AIzaSyDR1ieoRmpl7TaMikOSemC-t9Xnzgi7ads",
-      authDomain: "cercenatorul3000-5c8d6.firebaseapp.com",
-      projectId: "cercenatorul3000-5c8d6",
-      storageBucket: "cercenatorul3000-5c8d6.appspot.com",
-      messagingSenderId: "422720968169",
-      appId: "1:422720968169:web:bcd2e596cb2fc01042a778"
-    };
-
-    console.log("Firebase configuration loaded");
-
-    firebase.initializeApp(firebaseConfig);
-    console.log("Firebase initialized");
   </script>
-
-  <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js"></script>
-
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
   <script>
     window.addEventListener('load', function(ev) {
       console.log("Window loaded");

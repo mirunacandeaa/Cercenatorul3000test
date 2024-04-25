@@ -6,7 +6,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   print("Initializing Firebase...");
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: 'AIzaSyDR1ieoRmpl7TaMikOSemC-t9Xnzgi7ads',
+      appId: '1:422720968169:web:bcd2e596cb2fc01042a778',
+      messagingSenderId: '422720968169',
+      projectId: 'cercenatorul3000-5c8d6',
+      authDomain: 'cercenatorul3000-5c8d6.firebaseapp.com',
+      storageBucket: 'cercenatorul3000-5c8d6.appspot.com',
+    ),
+  );
   print("Firebase initialized");
 
   runApp(MyApp());
