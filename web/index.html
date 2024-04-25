@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -33,30 +20,50 @@
   <link rel="manifest" href="manifest.json">
 
   <script>
-    // The value below is injected by flutter build, do not touch.
+
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
     const serviceWorkerVersion = null;
+
+    // Initialize Firebase
+    var firebaseConfig = {
+      apiKey: "AIzaSyDR1ieoRmpl7TaMikOSemC-t9Xnzgi7ads",
+      authDomain: "cercenatorul3000-5c8d6.firebaseapp.com",
+      projectId: "cercenatorul3000-5c8d6",
+      storageBucket: "cercenatorul3000-5c8d6.appspot.com",
+      messagingSenderId: "422720968169",
+      appId: "1:422720968169:web:bcd2e596cb2fc01042a778"
+    };
+
+    console.log("Firebase configuration loaded");
+
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase initialized");
   </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
-</head>
-<body>
+
+  <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js"></script>
 
   <script>
     window.addEventListener('load', function(ev) {
-      // Download main.dart.js
+      console.log("Window loaded");
+
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
         onEntrypointLoaded: function(engineInitializer) {
+          console.log("Entrypoint loaded");
+
           engineInitializer.initializeEngine().then(function(appRunner) {
             appRunner.runApp();
+            console.log("App running");
           });
         }
       });
     });
-
-
   </script>
+</head>
+<body>
 </body>
 </html>

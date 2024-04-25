@@ -4,29 +4,33 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  print("Initializing Firebase...");
   await Firebase.initializeApp();
+  print("Firebase initialized");
+
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-
-
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp>{
+class _MyAppState extends State<MyApp> {
+  firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
 
-  firebase_auth.FirebaseAuth firebaseAuth=firebase_auth.FirebaseAuth.instance;
-  void signup()async
-  {
-    try{
-    await firebaseAuth.createUserWithEmailAndPassword(email: 'candeamirunagabriela@gmail.com', password: 'Cosinus10!');
-    }
-    catch(e){
-      print(e);
+  void signup() async {
+    try {
+      print("Attempting to sign up...");
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: 'candeamirunagabriela@gmail.com', password: 'Cosinus10!');
+      print("Signup successful");
+    } catch (e) {
+      print("Signup error: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,11 +39,15 @@ class _MyAppState extends State<MyApp>{
           title: Text("test"),
         ),
         body: Center(
-          child: ElevatedButton(onPressed:() {
-            signup();
-          }, child: Text("SignUp")),
-        )
+          child: ElevatedButton(
+            onPressed: () {
+              signup();
+            },
+            child: Text("SignUp"),
+          ),
+        ),
       ),
     );
   }
 }
+
