@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 
 import 'Theme/colors.dart';
@@ -58,8 +59,11 @@ class NavBar extends StatelessWidget {
             ),
           ),
           UserAccountsDrawerHeader(
-            accountName: Text('Oflutter.com'),
-            accountEmail: Text('example@gmail.com'),
+            accountName: null,
+            accountEmail: firebase_auth.FirebaseAuth.instance.currentUser != null
+                ? Text(firebase_auth.FirebaseAuth.instance.currentUser!.email ?? 'example@gmail.com')
+                : Text('example@gmail.com'),
+
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Container(

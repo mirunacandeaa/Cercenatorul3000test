@@ -12,13 +12,16 @@ import 'Widgets/bottomn_navigation_pink.dart';
 import 'Widgets/custom_button.dart';
 
 class locatii1 extends StatefulWidget {
+  final String projectId; // Adăugăm un membru pentru a stoca projectId
+
+  locatii1({required this.projectId}); // Constructor pentru a primi projectId
+
   @override
   _locatii1State createState() => _locatii1State();
 }
 
 class _locatii1State extends State<locatii1> {
   String _text = 'Alege judetul';
-
 
   void _changeTextAndColor(bool forward) {
     setState(() {
@@ -55,17 +58,16 @@ class _locatii1State extends State<locatii1> {
           IconButton(
             icon: Icon(Icons.arrow_forward),
             onPressed: () {
-              // Navighează către pagina "GenereazaCampul"
+              // Navighează către pagina "GenereazaCampul" și trimite projectId
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GenereazaCampul(),
+                  builder: (context) => GenereazaCampul(projectId: widget.projectId),
                 ),
               );
             },
           ),
         ],
-
       ),
       body: Stack(
         children: [
@@ -75,13 +77,12 @@ class _locatii1State extends State<locatii1> {
             right: 10,
             bottom: 100,
             child: _text == 'Alege judetul'
-                ? AlegeJudetul()
-
+                ? AlegeJudetul(projectId: widget.projectId)
                 : _text == 'Alege orasul'
                 ? AlegeOrasul()
                 : _text == 'Alege relief'
-                ? AlegeRelieful()
-                : AlegeTraseul(),
+                ? AlegeRelieful(projectId: widget.projectId)
+                : AlegeTraseul(projectId: widget.projectId),
           ),
           Positioned(
             top: 10,

@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'Theme/colors.dart';
 
 class GenereazaCampul extends StatelessWidget {
+
+  final String projectId;
+  GenereazaCampul({required this.projectId});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
