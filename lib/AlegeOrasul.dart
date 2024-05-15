@@ -1,14 +1,46 @@
+import 'package:cercenatorul3000/Theme/colors.dart';
+import 'package:cercenatorul3000/Widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-import 'Theme/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AlegeOrasul extends StatefulWidget {
+  final String projectId;
+
+  AlegeOrasul({required this.projectId});
+
   @override
   _AlegeOrasulState createState() => _AlegeOrasulState();
 }
 
 class _AlegeOrasulState extends State<AlegeOrasul> {
-  final List<String> orase = ['Sibiu', 'Medias', 'Cisnadie', 'Nocrich'];
   List<String> oraseSelectate = [];
+  List<String> orase = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getOrase();
+  }
+
+  Future<void> _getOrase() async {
+    QuerySnapshot oraseSnapshot = await FirebaseFirestore.instance
+        .collection('Judete')
+        .get();
+
+    for (QueryDocumentSnapshot judetDoc in oraseSnapshot.docs) {
+      QuerySnapshot oraseJudetSnapshot = await FirebaseFirestore.instance
+          .collection('Judete')
+          .doc(judetDoc.id)
+          .collection('Orase')
+          .get();
+
+      for (QueryDocumentSnapshot orasDoc in oraseJudetSnapshot.docs) {
+        setState(() {
+          orase.add(orasDoc.id);
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +48,18 @@ class _AlegeOrasulState extends State<AlegeOrasul> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(vertical: 10), // Spațiu vertical în jurul textului
+          padding: EdgeInsets.symmetric(vertical: 10),
           child: Center(
             child: Text(
-              oraseSelectate.join(', '), // Afișează orasele selectate separate prin virgulă
+              oraseSelectate.join(', '),
               style: TextStyle(fontSize: 18),
             ),
           ),
           decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: AppColors.pink, width: 2.0)), // Linia roșie sub text
+            border: Border(bottom: BorderSide(color: AppColors.crimson, width: 2.0)),
           ),
         ),
-        SizedBox(height: 30), // Spațiu între Container și Wrap
+        SizedBox(height: 30),
         Wrap(
           spacing: 10.0,
           runSpacing: 10.0,
@@ -39,9 +71,9 @@ class _AlegeOrasulState extends State<AlegeOrasul> {
               onPressed: () {
                 setState(() {
                   if (oraseSelectate.contains(oras)) {
-                    oraseSelectate.remove(oras); // Dacă orasul este deja selectat, îl eliminăm
+                    oraseSelectate.remove(oras);
                   } else {
-                    oraseSelectate.add(oras); // Altfel, îl adăugăm
+                    oraseSelectate.add(oras);
                   }
                 });
               },
@@ -52,7 +84,34 @@ class _AlegeOrasulState extends State<AlegeOrasul> {
             );
           }).toList(),
         ),
+        SizedBox(height: 50),
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            width: 150, // Setăm lățimea containerului la o valoare fixă
+            child: CustomButton(
+              onPressed: () => _salveazaOrasele(widget.projectId, oraseSelectate),
+              text: 'save',
+            ),
+          ),
+        ),
       ],
     );
+  }
+
+  void _salveazaOrasele(String projectId, List<String> selectedCities) {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+    selectedCities.forEach((oras) {
+      _firestore.collection('Proiecte').doc(projectId).collection('Orase').add(
+        {'oras': oras},
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Orașele au fost salvate cu succes!')),
+    );
+
+    // Poți adăuga aici orice altă acțiune după salvarea orașelor, cum ar fi navigarea la o altă pagină sau actualizarea stării widget-ului.
   }
 }

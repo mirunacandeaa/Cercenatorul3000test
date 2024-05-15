@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 
+import 'ListaProiecte.dart';
 import 'Theme/colors.dart';
 
 class NavBar extends StatelessWidget {
@@ -94,7 +95,12 @@ class NavBar extends StatelessWidget {
               'Saved projects',
               style: TextStyle(color: Colors.white),
             ),
-            onTap: () => null,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ListaProiecte()),
+              );
+            },
           ),
           ListTile(
             leading: Icon(

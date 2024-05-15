@@ -11,18 +11,25 @@ class HomePage extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void _addNewProject(BuildContext context) {
-    _firestore.collection('Proiecte').add({}).then((DocumentReference docRef) { // Modificarea a fost făcută aici
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Proiectul a fost creat cu succes!')),
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => InfoGenerale(projectId: docRef.id)), // Pasarea id-ului proiectului către InfoGenerale
-      );
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Eroare la crearea proiectului: $error')),
-      );
+    _firestore.collection('Proiecte').get().then((QuerySnapshot snapshot) {
+      int projectCount = snapshot.size; // Numărul de proiecte existente
+      String projectName = 'P$projectCount'; // Numele proiectului nou
+
+      _firestore.collection('Proiecte').doc(projectName).set({
+        // Aici puteți adăuga orice alte atribute ale proiectului
+      }).then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Proiectul a fost creat cu succes!')),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => InfoGenerale(projectId: projectName)),
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Eroare la crearea proiectului: $error')),
+        );
+      });
     });
   }
 

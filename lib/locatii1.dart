@@ -79,9 +79,9 @@ class _locatii1State extends State<locatii1> {
             child: _text == 'Alege judetul'
                 ? AlegeJudetul(projectId: widget.projectId)
                 : _text == 'Alege orasul'
-                ? AlegeOrasul()
+                ? AlegeOrasul(projectId: widget.projectId,)
                 : _text == 'Alege relief'
-                ? AlegeRelieful(projectId: widget.projectId)
+                ? AlegeRelieful(projectId: widget.projectId,)
                 : AlegeTraseul(projectId: widget.projectId),
           ),
           Positioned(

@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Theme/colors.dart';
+import 'package:http/http.dart' as http;
+import 'API.dart';
 
 class AlegeTraseul extends StatefulWidget {
   final String projectId;
@@ -12,14 +15,30 @@ class AlegeTraseul extends StatefulWidget {
 
 class _AlegeTraseulState extends State<AlegeTraseul> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final List<String> dificultate = ['Easy', 'Easy-Medium', 'Medium', 'Medium-Hard', 'Hard'];
+  final List<String> dificultate = [
+    'easy',
+    'easy-medium',
+    'medium',
+    'medium-hard',
+    'hard'
+  ];
   String selectedDificultate = '';
 
-  final List<String> durata = ['1H', '2H', '3H', '4H', '5H', '6H', '7H', '8H', '9H', '10+H'];
+  final List<String> durata = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10'
+  ];
   String durataSelectata = '';
 
   List<String> regiuni = [];
-
   String selectedRegiune = '';
   List<String> toateUnite = [];
 
@@ -30,14 +49,12 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
   }
 
   Future<void> _verificaSiSelecteazaRegiunile() async {
-    // Obținem lista de judete din colecția proiectului curent
     QuerySnapshot judeteSnapshot = await _firestore
         .collection('Proiecte')
         .doc(widget.projectId)
         .collection('Judete')
         .get();
 
-    // Colectăm lista de judete selectate
     List<String> judeteSelectate = [];
     for (QueryDocumentSnapshot judetDoc in judeteSnapshot.docs) {
       Map<String, dynamic>? data = judetDoc.data() as Map<String, dynamic>?;
@@ -46,7 +63,6 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
       }
     }
 
-    // Colectăm regiunile disponibile pentru judetele selectate
     Set<String> regiuniDisponibile = {};
     for (String judet in judeteSelectate) {
       QuerySnapshot regiuniSnapshot = await _firestore
@@ -60,7 +76,6 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
       }
     }
 
-    // Actualizăm lista de regiuni disponibile
     setState(() {
       regiuni = regiuniDisponibile.toList();
     });
@@ -77,7 +92,8 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppColors.pink, width: 2.0)),
+              border: Border(
+                  bottom: BorderSide(color: AppColors.pink, width: 2.0)),
             ),
             child: Center(
               child: Text(
@@ -100,12 +116,16 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
               children: dificultate.map((dif) {
                 return ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: selectedDificultate == dif ? AppColors.pink : AppColors.pink.withOpacity(0.5),
+                    foregroundColor: Colors.white,
+                    backgroundColor: selectedDificultate == dif
+                        ? AppColors.pink
+                        : AppColors.pink.withOpacity(0.5),
                   ),
                   onPressed: () {
                     setState(() {
                       selectedDificultate = dif;
-                      toateUnite = [selectedDificultate, durataSelectata, selectedRegiune];
+                      toateUnite =
+                      [selectedDificultate, durataSelectata, selectedRegiune];
                     });
                   },
                   child: Text(
@@ -128,12 +148,16 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
             children: durata.map((odurata) {
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: durataSelectata == odurata ? AppColors.pink : AppColors.pink.withOpacity(0.5),
+                  foregroundColor: Colors.white,
+                  backgroundColor: durataSelectata == odurata
+                      ? AppColors.pink
+                      : AppColors.pink.withOpacity(0.5),
                 ),
                 onPressed: () {
                   setState(() {
                     durataSelectata = odurata;
-                    toateUnite = [selectedDificultate, durataSelectata, selectedRegiune];
+                    toateUnite =
+                    [selectedDificultate, durataSelectata, selectedRegiune];
                   });
                 },
                 child: Text(
@@ -155,12 +179,16 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
             children: regiuni.map((regiune) {
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: selectedRegiune == regiune ? AppColors.pink : AppColors.pink.withOpacity(0.5),
+                  foregroundColor: Colors.white,
+                  backgroundColor: selectedRegiune == regiune
+                      ? AppColors.pink
+                      : AppColors.pink.withOpacity(0.5),
                 ),
                 onPressed: () {
                   setState(() {
                     selectedRegiune = regiune;
-                    toateUnite = [selectedDificultate, durataSelectata, selectedRegiune];
+                    toateUnite =
+                    [selectedDificultate, durataSelectata, selectedRegiune];
                   });
                 },
                 child: Text(
@@ -170,35 +198,51 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
               );
             }).toList(),
           ),
-          // Rând cu butoanele "Save" și "Alege alt traseu"
           SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Column(
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: AppColors.crimson,
-                ),
-                onPressed: () {
-                  _salveazaTraseul(context, widget.projectId, durataSelectata, selectedDificultate, selectedRegiune);
-
-                  // Aici puteți adăuga logica de salvare dacă este necesar
-                },
-                child: Text('Save', style: TextStyle(fontSize: 18)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.crimson,
+                    ),
+                    onPressed: () {
+                      saveDataToServer(
+                          durataSelectata, selectedDificultate, selectedRegiune);
+                    },
+                    child: Text('Save', style: TextStyle(fontSize: 18)),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.crimson,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedDificultate = '';
+                        durataSelectata = '';
+                        selectedRegiune = '';
+                        toateUnite =
+                        [selectedDificultate, durataSelectata, selectedRegiune];
+                      });
+                    },
+                    child: Text('Alege alt traseu', style: TextStyle(fontSize: 18)),
+                  ),
+                ],
               ),
+              SizedBox(height: 10),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: AppColors.crimson,
+                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.crimson,
                 ),
                 onPressed: () {
-                  setState(() {
-                    selectedDificultate = '';
-                    durataSelectata = '';
-                    selectedRegiune = '';
-                    toateUnite = [selectedDificultate, durataSelectata, selectedRegiune];
-                  });
+                  getRecommendations();
                 },
-                child: Text('Alege alt traseu', style: TextStyle(fontSize: 18)),
+                child: Text('Get Recommendations', style: TextStyle(fontSize: 18)),
               ),
             ],
           ),
@@ -206,31 +250,77 @@ class _AlegeTraseulState extends State<AlegeTraseul> {
       ),
     );
   }
-}
+
+  void saveDataToServer(String durata, String dificultate, String regiune) async {
+    try {
+      String url = 'http://127.0.0.1:5000/api?Durata=$durata&Dificultate=$dificultate&Regiune=$regiune';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        List<dynamic> decodedData = jsonDecode(response.body);
+        for (var item in decodedData) {
+          String difficulty = item['Difficulty'];
+          String hours = item['Hours'];
+          String kilometers = item['Kilometers'];
+          String place = item['Place'];
+          String region = item['Region'];
+
+          _salveazaTraseul(context, widget.projectId, hours, difficulty, kilometers, place, region);
+        }
+      } else {
+        print('Error fetching data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _salveazaTraseul(BuildContext context, String projectId, String durata,
+      String dificultate, String kilometers, String place, String region) {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+    _firestore.collection('Proiecte').doc(projectId).collection('Trasee').doc(place).set({
+      'durata': durata,
+      'dificultate': dificultate,
+      'kilometers': kilometers,
+      'place': place,
+      'region': region,
+    })
+        .then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Traseul a fost salvat cu succes!'),
+        ),
+      );
+    })
+        .catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Eroare la salvarea traseului: $error'),
+        ),
+      );
+    });
+  }
 
 
-void _salveazaTraseul(BuildContext context, String projectId, String durata, String dificultate, String regiune) {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  _firestore.collection('Proiecte').doc(projectId).collection('Trasee').add({
-    'durata': durata,
-    'dificultate': dificultate,
-    'regiune': regiune,
-  })
-      .then((_) {
-    // Afișăm un mesaj de succes
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Traseul a fost salvat cu succes!'),
-      ),
-    );
-  })
-      .catchError((error) {
-    // Afișăm un mesaj de eroare în caz de eșec
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Eroare la salvarea traseului: $error'),
-      ),
-    );
-  });
+  void getRecommendations() async {
+    try {
+      // Definim URL-ul pentru cererea POST către serverul Flask
+      String url = 'http://127.0.0.1:5001/generate_recommendations';
+
+      // Trimiterea cererii POST către serverul Flask
+      var response = await http.post(Uri.parse(url));
+
+      // Verificăm dacă cererea a fost executată cu succes
+      if (response.statusCode == 200) {
+        print('Recommendations received!');
+      } else {
+        print('Error fetching recommendations: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
 }
