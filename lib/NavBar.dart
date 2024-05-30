@@ -113,18 +113,7 @@ class NavBar extends StatelessWidget {
             ),
             onTap: () => _showHowItWorksDialog(context), // Show the dialog
           ),
-          Divider(),
-          ListTile(
-            leading: Icon(
-              Icons.person,
-              color: Colors.white,
-            ),
-            title: Text(
-              'Edit profile',
-              style: TextStyle(color: Colors.white),
-            ),
-            onTap: () => null,
-          ),
+
         ],
       ),
     );
